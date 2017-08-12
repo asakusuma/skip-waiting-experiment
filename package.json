@@ -1,0 +1,13 @@
+{
+  "name": "skip-waiting-experiment",
+  "version": "0.0.1",
+  "description": "Exploring skipWaiting() in a service worker",
+  "main": "index.js",
+  "repository": "https://github.com/asakusuma/skip-waiting-experiment.git",
+  "author": "asakusuma",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.15.4",
+    "randomstring": "^1.1.5"
+  }
+}
