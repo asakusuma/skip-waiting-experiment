@@ -10,6 +10,8 @@ According to the spec, [skipWaiting](https://www.w3.org/TR/service-workers-1/#se
 
 While it's not exactly explicit as to what "request" means here, we're going to test my hypothesis that this simply means any operation defined by the service worker primitives `waitUntil` and `respondWith`.
 
+Conversely, scheduling async operations without `waitUntil` will result in a race condition: the `setTimeout` callback won't execute if `skipWaiting` is called first. This problem has also been documented by Mike North [here](https://glitch.com/edit/#!/beryl-geology).
+
 ## Setup
 
 I've created a simple `index.html` page that registers a service worker, `sw.js`. The web page shows any messages sent from the service worker (console.log support in service workers is not great in Chrome).
@@ -72,7 +74,7 @@ Version H3jV7 activated
 
 `skipWaiting()` will deterministically wait until the old service worker is finished any operations, assuming operations are properly setup using `waitUntil` and `respondWith`. This is general best practice anyways.
 
-If you use setTimeout to schedule operations without `waitUntil` or `respondWith`, you have no guarantees about completion order or that the operations will even complete. Use `waitUntil` and `respondWith`.
+If you schedule async operations without `waitUntil` or `respondWith`, you have no guarantees about completion order or that the operations will even complete. Use `waitUntil` and `respondWith`.
 
 ### Recomendations for the spec writers
 
