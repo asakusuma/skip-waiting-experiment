@@ -6,6 +6,9 @@
   "repository": "https://github.com/asakusuma/skip-waiting-experiment.git",
   "author": "asakusuma",
   "license": "MIT",
+  "scripts": {
+    "serve": "node server.js"
+  },
   "dependencies": {
     "express": "^4.15.4",
     "randomstring": "^1.1.5"

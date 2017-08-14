@@ -1,8 +1,12 @@
 const version = '%VERSION%';
 const cacheName = version;
 
-function logMessage() {
-  console.log.apply(null, arguments);
+function logMessage(msg) {
+  self.clients.matchAll().then((clients) => {
+    clients.forEach((client) => {
+      client.postMessage(msg);
+    });
+  });
 }
 
 function install() {
@@ -13,7 +17,7 @@ function install() {
   });
 }
 
-function respondAsset() {
+function respondFromCache() {
   return caches.open(cacheName).then((cache) => {
     return cache.match('/asset.js').then((response) => {
       if (response) {
@@ -26,34 +30,41 @@ function respondAsset() {
 
 self.addEventListener('install', function(event) {
   event.waitUntil(install().then(() => {
-    logMessage('skipwaiting');
+    logMessage('skipwaiting', event);
     self.skipWaiting();
   }));
 });
+
 self.addEventListener('activate', function(event) {
-  logMessage('Version', version, 'activated');
+  logMessage(`Version ${version} activated`, event);
   event.waitUntil(self.clients.claim());
 });
+
 self.addEventListener('fetch', function(event) {
   const path = new URL(event.request.url).pathname;
   if (path === '/asset.js') {
-    event.respondWith(respondAsset());
+    event.respondWith(respondFromCache());
   } else if (path === '/slow') {
+    // Wait 10 seconds before responding
     event.respondWith(new Promise((r) => {
       setTimeout(r, 10000);
-    }).then(respondAsset));
+    }).then(respondFromCache));
   } else if (path === '/wait') {
-    event.respondWith(respondAsset());
+    // Respond immediately, but extend the request
+    // for 10 seconds via waitUntil()
+    event.respondWith(respondFromCache());
     event.waitUntil(new Promise((r) => {
       setTimeout(() => {
-        logMessage('wait');
+        logMessage('wait', event);
         r();
       }, 10000);
     }));
   } else if (path === '/settimeout') {
-    event.respondWith(respondAsset());
+    // Respond immediately, but setup a setTimeout
+    // for 10 seconds
+    event.respondWith(respondFromCache());
     setTimeout(() => {
-      logMessage('settimeout');
+      logMessage('settimeout', event);
     }, 10000);
   }
 });
