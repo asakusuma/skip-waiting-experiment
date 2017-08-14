@@ -10,7 +10,7 @@ According to the spec, [skipWaiting](https://www.w3.org/TR/service-workers-1/#se
 
 While it's not exactly explicit as to what "request" means here, we're going to test my hypothesis that this simply means any operation defined by the service worker primitives `waitUntil` and `respondWith`.
 
-Conversely, scheduling async operations without `waitUntil` will result in a race condition: the `setTimeout` callback won't execute if `skipWaiting` is called first. This problem has also been documented by Mike North [here](https://glitch.com/edit/#!/beryl-geology).
+Conversely, scheduling async operations without `waitUntil` will result in a race condition: `skipWaiting` will cutoff any such operations. So any such operations may or may not complete if they happen around when the service worker is installing a new version. This problem has also been documented by Mike North [here](https://glitch.com/edit/#!/beryl-geology).
 
 ## Setup
 
