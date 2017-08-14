@@ -2,7 +2,7 @@ const version = '%VERSION%';
 const cacheName = version;
 
 function logMessage(msg) {
-  self.clients.matchAll().then((clients) => {
+  return self.clients.matchAll().then((clients) => {
     clients.forEach((client) => {
       client.postMessage(msg);
     });
@@ -46,17 +46,18 @@ self.addEventListener('fetch', function(event) {
     event.respondWith(respondFromCache());
   } else if (path === '/slow') {
     // Wait 10 seconds before responding
-    event.respondWith(new Promise((r) => {
-      setTimeout(r, 10000);
+    event.respondWith(new Promise((resolve) => {
+      setTimeout(() => {
+        logMessage('responded to /slow').then(resolve);
+      }, 10000);
     }).then(respondFromCache));
   } else if (path === '/wait') {
     // Respond immediately, but extend the request
     // for 10 seconds via waitUntil()
     event.respondWith(respondFromCache());
-    event.waitUntil(new Promise((r) => {
+    event.waitUntil(new Promise((resolve) => {
       setTimeout(() => {
-        logMessage('wait', event);
-        r();
+        logMessage('done waiting for /wait', event).then(resolve);
       }, 10000);
     }));
   } else if (path === '/settimeout') {
