@@ -30,13 +30,13 @@ function respondFromCache() {
 
 self.addEventListener('install', function(event) {
   event.waitUntil(install().then(() => {
-    logMessage('skipwaiting', event);
+    logMessage('skipwaiting');
     self.skipWaiting();
   }));
 });
 
 self.addEventListener('activate', function(event) {
-  logMessage(`Version ${version} activated`, event);
+  logMessage(`Version ${version} activated`);
   event.waitUntil(self.clients.claim());
 });
 
@@ -48,7 +48,7 @@ self.addEventListener('fetch', function(event) {
     // Wait 10 seconds before responding
     event.respondWith(new Promise((resolve) => {
       setTimeout(() => {
-        logMessage('responded to /slow').then(resolve);
+        logMessage(`version ${version} responded to /slow`).then(resolve);
       }, 10000);
     }).then(respondFromCache));
   } else if (path === '/wait') {
@@ -57,7 +57,7 @@ self.addEventListener('fetch', function(event) {
     event.respondWith(respondFromCache());
     event.waitUntil(new Promise((resolve) => {
       setTimeout(() => {
-        logMessage('done waiting for /wait', event).then(resolve);
+        logMessage(`version ${version} done waiting for /wait`, event).then(resolve);
       }, 10000);
     }));
   } else if (path === '/settimeout') {
