@@ -70,7 +70,9 @@ Version H3jV7 activated
 
 ## Conclusions
 
-In order to gaurantee that `skipWaiting()` doesn't prematurely end the old service worker, ensure that all operations are properly scheduled using `waitUntil` and `respondWith`. This is general best practice anyways.
+`skipWaiting()` will deterministically wait until the old service worker is finished any operations, assuming operations are properly setup using `waitUntil` and `respondWith`. This is general best practice anyways.
+
+If you use setTimeout to schedule operations without `waitUntil` or `respondWith`, you have no guarantees about completion order or that the operations will even complete. Use `waitUntil` and `respondWith`.
 
 ### Recomendations for the spec writers
 
